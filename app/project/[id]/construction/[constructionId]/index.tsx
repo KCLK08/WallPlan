@@ -15,6 +15,7 @@ import { useAppTheme } from '@/components/useAppTheme';
 import { useTranslation } from '@/components/useTranslation';
 import { constructionText } from '@/constants/constructionCopy';
 import { materialText } from '@/constants/materialCopy';
+import { modelText } from '@/constants/modelCopy';
 import type { WallDraft } from '@/construction/wallModel';
 import { materialLabel } from '@/construction/wallRules';
 import {
@@ -141,6 +142,11 @@ export default function ConstructionScreen() {
           <Button
             label={materialText(language, 'openList')}
             onPress={() => router.push(`/project/${id}/construction/${construction.id}/materials`)}
+          />
+          <Button
+            label={modelText(language, 'openModel')}
+            variant="secondary"
+            onPress={() => router.push(`/project/${id}/construction/${construction.id}/model`)}
           />
         </View>
       ) : (
