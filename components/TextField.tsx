@@ -1,4 +1,4 @@
-import { Text, TextInput, View } from 'react-native';
+import { Text, TextInput, View, type KeyboardTypeOptions } from 'react-native';
 
 import { useAppTheme } from '@/components/useAppTheme';
 
@@ -9,9 +9,10 @@ type TextFieldProps = {
   placeholder?: string;
   multiline?: boolean;
   error?: string;
+  keyboardType?: KeyboardTypeOptions;
 };
 
-export function TextField({ label, value, onChangeText, placeholder, multiline = false, error }: TextFieldProps) {
+export function TextField({ label, value, onChangeText, placeholder, multiline = false, error, keyboardType }: TextFieldProps) {
   const theme = useAppTheme();
 
   return (
@@ -24,6 +25,7 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
         placeholder={placeholder}
         placeholderTextColor={theme.colors.steel}
         multiline={multiline}
+        keyboardType={keyboardType}
         style={{
           minHeight: multiline ? 120 : 56,
           borderRadius: theme.radius.control,

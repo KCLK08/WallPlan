@@ -2,7 +2,7 @@
 
 Private Offline-App zur 3D-Planung von Trockenbaukonstruktionen. Es gibt kein Konto, kein Backend und keine Cloud. Projekte und Einstellungen liegen in einer lokalen SQLite-Datenbank.
 
-Der Wandkonfigurator folgt in einer späteren Phase. Diese Version enthält das Grundgerüst, den 3D-Prototypen, den Materialkatalog 3.0.0 und die lokale Projektverwaltung.
+Diese Version enthält das Grundgerüst, den 3D-Prototypen, den Materialkatalog 3.0.0, die lokale Projektverwaltung und den Konfigurator für eine Metallständer-Trennwand. Die echte 3D-Ansicht der konfigurierten Wand folgt später.
 
 ## Technologiestack
 
@@ -62,8 +62,8 @@ In dieser Entwicklungsumgebung konnte Expo Go auf einem Android-Gerät nicht aus
 ```text
 app/                 Screens und Navigation (Expo Router)
 components/          Wiederverwendbare Oberfläche
-features/            Anwendungsfälle der Projektverwaltung
-construction/        Konstruktionsdaten des Prototyps
+features/            Projektverwaltung und Konfigurator
+construction/        Konstruktionsmodell, Regeln und Prototypwand
 catalog/             Lokaler Materialkatalog, Version und Kompatibilitätsregeln
 calculations/        Ständerabstände und Maßangaben
 three-dimensional/   Geometrie, Kamera und 3D-Ansicht
@@ -78,7 +78,7 @@ docs/                Technische Dokumentation
 
 Projekte liegen in der lokalen SQLite-Datei `wallplan.db`. Es gibt kein Konto und keinen Server.
 
-Ein Projekt hat eine stabile ID, Name, optionale Beschreibung, Status `active`, Erstellungs- und Änderungszeit und eine Liste von Konstruktionen. Die Konstruktionstabelle ist angelegt, bleibt in dieser Phase aber leer. Maße, Profile, Beplankung, Dämmung, Öffnungen und Materialreferenzen sind für die nächste Phase in der Spalte `data_json` vorgesehen und werden noch nicht geschrieben.
+Ein Projekt hat eine stabile ID, Name, optionale Beschreibung, Status `active`, Erstellungs- und Änderungszeit und eine Liste von Konstruktionen. Eine Metallständerwand wird in `constructions.data_json` gespeichert. Die Konfigurationsversion darin ist 1. Das SQLite-Schema bleibt Version 2, weil die Tabelle schon in Phase 4 angelegt wurde.
 
 Beim Start liest die App das Schema und führt nur die fehlenden Schritte aus. Bestehende Projekte aus Phase 2 und 3 bekommen dabei die Statusspalte `active`. Die Schemaversion steht in `app_meta` unter `schema_version`. Die Katalogversion bleibt getrennt. Details stehen in [docs/project-management.md](docs/project-management.md).
 
@@ -87,7 +87,8 @@ Beim Start liest die App das Schema und führt nur die fehlenden Schritte aus. B
 - Startseite mit Begrüßung, neuem Projekt, zuletzt bearbeiteten Projekten und kompakter Projektliste
 - Projektübersicht mit Suche, Umbenennen, Bearbeiten und bestätigtem Löschen
 - Neues Projekt, danach direkt die Projektseite
-- Projektseite mit leerer Konstruktionsansicht
+- Projektseite mit gespeicherten Konstruktionen
+- Konfigurator für eine Metallständer-Trennwand in sieben Schritten
 - Einstellungen für Sprache, Maßeinheit und Hell-/Dunkelmodus
 - 3D-Prototyp einer Metallständer-Trennwand
 - Materialkatalog mit Suche, Kategorien und technischen Details
@@ -97,3 +98,5 @@ Beim Start liest die App das Schema und führt nur die fehlenden Schritte aus. B
 Version 3.0.0, 88 Einträge, mit der App ausgeliefert. SQLite merkt sich nur die Katalogversion in `app_meta`. Die Einträge selbst liegen nicht ein zweites Mal in der Datenbank.
 
 Der Katalog unterscheidet belegte Herstellerwerte, Normklassen und leere Felder. Ungeprüfte Kombinationen gelten nicht als geeignet. OSB und Gipskarton sind getrennte Schichten. Eine Schraube für OSB auf Metall ist nicht belegt und wird nicht als passend angeboten.
+
+Regeln, Datenmodell und die offenen Punkte zu OSB auf Metall stehen in [docs/wall-configurator.md](docs/wall-configurator.md).

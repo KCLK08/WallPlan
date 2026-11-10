@@ -15,7 +15,7 @@ Stand: Schemaversion 2, November 2026.
 | `createdAt`, `updatedAt` | ISO-Zeitstempel |
 | `constructions` | Liste späterer Konstruktionen, in dieser Phase leer |
 
-`ConstructionRecord` hat ID, Projektbezug, Typ, Namen und Zeitstempel. Die Tabelle `constructions` enthält zusätzlich `data_json`. Dort können später Maße, Profil, Beplankung, Dämmung, Öffnungen und Materialreferenzen liegen. Phase 4 schreibt diese Daten nicht.
+`ConstructionRecord` hat ID, Projektbezug, Typ, Namen und Zeitstempel. Die Tabelle `constructions` enthält `data_json`. Eine Metallständerwand liegt dort als Konfigurationsversion 1. Leeres `{}` bleibt eine Konstruktion ohne lesbare Wanddaten. Das Modell steht in [wall-configurator.md](wall-configurator.md).
 
 ## SQLite
 
