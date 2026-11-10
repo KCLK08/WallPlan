@@ -65,7 +65,7 @@ components/          Wiederverwendbare Oberfläche
 features/            Projektverwaltung und Konfigurator
 construction/        Konstruktionsmodell, Regeln und Prototypwand
 catalog/             Lokaler Materialkatalog, Version und Kompatibilitätsregeln
-calculations/        Ständerabstände und Maßangaben
+calculations/        Ständerabstände, Maßangaben und Materialberechnung
 three-dimensional/   Geometrie, Kamera und 3D-Ansicht
 database/            SQLite-Schema und Zugriffe
 store/               Zustand für Einstellungen und Projektliste
@@ -80,6 +80,8 @@ Projekte liegen in der lokalen SQLite-Datei `wallplan.db`. Es gibt kein Konto un
 
 Ein Projekt hat eine stabile ID, Name, optionale Beschreibung, Status `active`, Erstellungs- und Änderungszeit und eine Liste von Konstruktionen. Eine Metallständerwand wird in `constructions.data_json` gespeichert. Die Konfigurationsversion darin ist 1. Das SQLite-Schema bleibt Version 2, weil die Tabelle schon in Phase 4 angelegt wurde.
 
+Die Materialliste wird beim Ansehen neu aus dieser Wand gerechnet und nicht gespeichert. Berechnungsversion 1 steht nur im angezeigten Ergebnis. Details stehen in [docs/material-calculation.md](docs/material-calculation.md).
+
 Beim Start liest die App das Schema und führt nur die fehlenden Schritte aus. Bestehende Projekte aus Phase 2 und 3 bekommen dabei die Statusspalte `active`. Die Schemaversion steht in `app_meta` unter `schema_version`. Die Katalogversion bleibt getrennt. Details stehen in [docs/project-management.md](docs/project-management.md).
 
 ## Screens
@@ -89,6 +91,7 @@ Beim Start liest die App das Schema und führt nur die fehlenden Schritte aus. B
 - Neues Projekt, danach direkt die Projektseite
 - Projektseite mit gespeicherten Konstruktionen
 - Konfigurator für eine Metallständer-Trennwand in sieben Schritten
+- Materialliste der gespeicherten Wand, ohne Preise
 - Einstellungen für Sprache, Maßeinheit und Hell-/Dunkelmodus
 - 3D-Prototyp einer Metallständer-Trennwand
 - Materialkatalog mit Suche, Kategorien und technischen Details

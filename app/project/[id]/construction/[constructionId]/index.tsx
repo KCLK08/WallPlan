@@ -14,6 +14,7 @@ import { TopBar } from '@/components/TopBar';
 import { useAppTheme } from '@/components/useAppTheme';
 import { useTranslation } from '@/components/useTranslation';
 import { constructionText } from '@/constants/constructionCopy';
+import { materialText } from '@/constants/materialCopy';
 import type { WallDraft } from '@/construction/wallModel';
 import { materialLabel } from '@/construction/wallRules';
 import {
@@ -137,6 +138,10 @@ export default function ConstructionScreen() {
             missingLabel={constructionText(language, 'schematicMissing')}
           />
           <Text style={{ color: theme.colors.steel, ...theme.type.body }}>{constructionText(language, 'systemNote')}</Text>
+          <Button
+            label={materialText(language, 'openList')}
+            onPress={() => router.push(`/project/${id}/construction/${construction.id}/materials`)}
+          />
         </View>
       ) : (
         <Text style={{ color: theme.colors.danger, ...theme.type.body }}>{constructionText(language, 'dataMissing')}</Text>
