@@ -7,13 +7,13 @@ import { useTranslation } from '@/components/useTranslation';
 import { useSettingsStore } from '@/store/settingsStore';
 import type { Project } from '@/types/project';
 
-export function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({ project, onOpen }: { project: Project; onOpen?: () => void }) {
   const theme = useAppTheme();
   const t = useTranslation();
   const language = useSettingsStore((state) => state.language);
 
   return (
-    <Card>
+    <Card onPress={onOpen}>
       <Text style={{ color: theme.colors.ink, fontSize: 18, lineHeight: 24, fontWeight: '700' }}>{project.name}</Text>
       <Text style={{ color: theme.colors.steel, ...theme.type.body }}>
         {project.description || t('noDescription')}

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0] - 2026-11-10
+
+### Added
+
+- Lokale Projektverwaltung: anlegen, öffnen, bearbeiten, umbenennen und bestätigt löschen
+- SQLite-Migration auf Schema 2 mit Statusspalte und leerer Konstruktionstabelle
+- Startseite mit zuletzt bearbeiteten Projekten
+
 ## [0.3.0] - 2026-11-10
 
 ### Added

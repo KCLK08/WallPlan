@@ -2,7 +2,7 @@
 
 Private Offline-App zur 3D-Planung von Trockenbaukonstruktionen. Es gibt kein Konto, kein Backend und keine Cloud. Projekte und Einstellungen liegen in einer lokalen SQLite-Datenbank.
 
-Der fachliche Ausbau der Metallständer-Trennwand folgt in späteren Phasen. Diese Version enthält das Expo-Grundgerüst, die ersten Screens, einen 3D-Prototypen mit festen Testmaßen und den lokalen Materialkatalog 3.0.0.
+Der Wandkonfigurator folgt in einer späteren Phase. Diese Version enthält das Grundgerüst, den 3D-Prototypen, den Materialkatalog 3.0.0 und die lokale Projektverwaltung.
 
 ## Technologiestack
 
@@ -62,7 +62,7 @@ In dieser Entwicklungsumgebung konnte Expo Go auf einem Android-Gerät nicht aus
 ```text
 app/                 Screens und Navigation (Expo Router)
 components/          Wiederverwendbare Oberfläche
-features/            Anwendungsfälle, derzeit Projekte anlegen
+features/            Anwendungsfälle der Projektverwaltung
 construction/        Konstruktionsdaten des Prototyps
 catalog/             Lokaler Materialkatalog, Version und Kompatibilitätsregeln
 calculations/        Ständerabstände und Maßangaben
@@ -74,11 +74,20 @@ constants/           Farben, Typografie, Texte
 docs/                Technische Dokumentation
 ```
 
-## Erste Screens
+## Projektverwaltung
 
-- Startseite mit neuem Projekt, eigenen Projekten und zuletzt bearbeitetem Projekt
-- Projektliste, inklusive leerer Ansicht
-- Neues Projekt mit Name und optionaler Beschreibung
+Projekte liegen in der lokalen SQLite-Datei `wallplan.db`. Es gibt kein Konto und keinen Server.
+
+Ein Projekt hat eine stabile ID, Name, optionale Beschreibung, Status `active`, Erstellungs- und Änderungszeit und eine Liste von Konstruktionen. Die Konstruktionstabelle ist angelegt, bleibt in dieser Phase aber leer. Maße, Profile, Beplankung, Dämmung, Öffnungen und Materialreferenzen sind für die nächste Phase in der Spalte `data_json` vorgesehen und werden noch nicht geschrieben.
+
+Beim Start liest die App das Schema und führt nur die fehlenden Schritte aus. Bestehende Projekte aus Phase 2 und 3 bekommen dabei die Statusspalte `active`. Die Schemaversion steht in `app_meta` unter `schema_version`. Die Katalogversion bleibt getrennt. Details stehen in [docs/project-management.md](docs/project-management.md).
+
+## Screens
+
+- Startseite mit Begrüßung, neuem Projekt, zuletzt bearbeiteten Projekten und kompakter Projektliste
+- Projektübersicht mit Suche, Umbenennen, Bearbeiten und bestätigtem Löschen
+- Neues Projekt, danach direkt die Projektseite
+- Projektseite mit leerer Konstruktionsansicht
 - Einstellungen für Sprache, Maßeinheit und Hell-/Dunkelmodus
 - 3D-Prototyp einer Metallständer-Trennwand
 - Materialkatalog mit Suche, Kategorien und technischen Details

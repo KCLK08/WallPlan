@@ -5,15 +5,16 @@ import { useAppTheme } from '@/components/useAppTheme';
 type ButtonProps = {
   label: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   disabled?: boolean;
 };
 
 export function Button({ label, onPress, variant = 'primary', disabled = false }: ButtonProps) {
   const theme = useAppTheme();
   const background =
-    variant === 'primary' ? theme.colors.accent : variant === 'secondary' ? theme.colors.card : 'transparent';
-  const color = variant === 'primary' ? theme.colors.onAccent : theme.colors.ink;
+    variant === 'primary' ? theme.colors.accent : variant === 'ghost' ? 'transparent' : theme.colors.card;
+  const color = variant === 'primary' ? theme.colors.onAccent : variant === 'danger' ? theme.colors.danger : theme.colors.ink;
+  const borderColor = variant === 'danger' ? theme.colors.danger : variant === 'primary' ? 'transparent' : theme.colors.line;
 
   return (
     <Pressable
@@ -25,7 +26,7 @@ export function Button({ label, onPress, variant = 'primary', disabled = false }
         borderRadius: theme.radius.control,
         backgroundColor: pressed && variant === 'primary' ? theme.colors.accentPressed : background,
         borderWidth: variant === 'ghost' ? 0 : 1,
-        borderColor: variant === 'primary' ? 'transparent' : theme.colors.line,
+        borderColor,
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 20,
