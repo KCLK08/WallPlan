@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0] - 2026-11-10
+
+### Added
+
+- Interaktive 3D-Ansicht einer gespeicherten Metallständerwand
+- Ansichtsmodi Gesamt, Seite A, Seite B, Konstruktion, Schichten und Explosion
+- Ein- und Ausblenden von Profilen, Beplankung, Dämmung und Öffnungsmarkierung
+
 ## [0.6.0] - 2026-11-10
 
 ### Added

@@ -5,6 +5,9 @@ export type OrbitCamera = {
   targetX: number;
   targetY: number;
   targetZ: number;
+  minRadius?: number;
+  maxRadius?: number;
+  frameRadius?: number;
 };
 
 const MIN_PHI = 0.18;
@@ -52,12 +55,28 @@ export function panOrbit(camera: OrbitCamera, deltaX: number, deltaY: number): v
   camera.targetZ -= (right.z * deltaX + up.z * deltaY) * scale;
 }
 
+export function frameWallCamera(lengthM: number, heightM: number, depthM: number): OrbitCamera {
+  const span = Math.max(lengthM, heightM, depthM, 0.4);
+  const radius = span * 1.7;
+  return {
+    theta: 0.62,
+    phi: 1.18,
+    radius,
+    targetX: lengthM / 2,
+    targetY: heightM * 0.46,
+    targetZ: 0,
+    minRadius: Math.max(0.35, span * 0.28),
+    maxRadius: Math.max(MAX_RADIUS, span * 8),
+    frameRadius: radius,
+  };
+}
+
 export function zoomOrbit(camera: OrbitCamera, factor: number): void {
   if (!Number.isFinite(factor) || factor <= 0) {
     return;
   }
   const next = camera.radius * factor;
-  camera.radius = Math.min(MAX_RADIUS, Math.max(MIN_RADIUS, next));
+  camera.radius = Math.min(camera.maxRadius ?? MAX_RADIUS, Math.max(camera.minRadius ?? MIN_RADIUS, next));
 }
 
 function cameraBasis(theta: number, phi: number): {
