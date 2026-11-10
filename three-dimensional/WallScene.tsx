@@ -28,12 +28,11 @@ export function WallScene({ showBoard, cameraRef }: WallSceneProps) {
 
   useFrame(() => {
     const [x, y, z] = orbitPosition(cameraRef.current);
+    if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
+      return;
+    }
     camera.position.set(x, y, z);
-    camera.lookAt(
-      cameraRef.current.targetX,
-      cameraRef.current.targetY,
-      cameraRef.current.targetZ,
-    );
+    camera.lookAt(cameraRef.current.targetX, cameraRef.current.targetY, cameraRef.current.targetZ);
   });
 
   return (

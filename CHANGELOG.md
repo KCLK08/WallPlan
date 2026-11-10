@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0] - 2026-11-10
+
+### Added
+
+- Offline-Materialkatalog 3.0.0 mit 88 Einträgen, Suche und Detailansicht
+- Kompatibilitätsregeln für Profile, Platten, Schrauben, Dämmung und Abhänger
+- Quellen- und Datenmodelldokumentation unter `docs/`
+
 ## [0.2.0] - 2026-11-10
 
 ### Added
