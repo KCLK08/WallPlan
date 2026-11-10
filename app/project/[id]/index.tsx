@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { useSQLiteContext } from 'expo-sqlite';
 import { Text, View } from 'react-native';
 
-import { formatTimestamp } from '@/calculations/units';
+import { formatLength, formatTimestamp } from '@/calculations/units';
 import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
@@ -20,6 +21,7 @@ export default function ProjectScreen() {
   const theme = useAppTheme();
   const t = useTranslation();
   const language = useSettingsStore((state) => state.language);
+  const unit = useSettingsStore((state) => state.units);
   const db = useSQLiteContext();
   const { id } = useLocalSearchParams<{ id: string }>();
   const project = useProjectsStore((state) => state.projects.find((entry) => entry.id === id));
@@ -79,13 +81,22 @@ export default function ProjectScreen() {
         <EmptyState title={t('noConstructionsTitle')} body={t('noConstructionsBody')} />
       ) : (
         project.constructions.map((construction) => (
-          <Text key={construction.id} style={{ color: theme.colors.ink, ...theme.type.body }}>
-            {construction.name || construction.type}
-          </Text>
+          <Card key={construction.id} onPress={() => router.push(`/project/${project.id}/construction/${construction.id}`)}>
+            <Text style={{ color: theme.colors.ink, fontSize: 18, lineHeight: 24, fontWeight: '700' }}>
+              {construction.name || construction.type}
+            </Text>
+            <Text style={{ color: theme.colors.steel, ...theme.type.body }}>
+              {construction.data
+                ? `${formatLength(construction.data.dimensions.lengthMm, unit, language)} × ${formatLength(construction.data.dimensions.heightMm, unit, language)}`
+                : t('noDescription')}
+            </Text>
+            <Text style={{ color: theme.colors.steel, fontSize: 13, lineHeight: 18 }}>
+              {t('updatedOn')} {formatTimestamp(construction.updatedAt, language)}
+            </Text>
+          </Card>
         ))
       )}
-      <Button label={t('addConstruction')} disabled onPress={() => undefined} />
-      <Text style={{ color: theme.colors.steel, ...theme.type.body }}>{t('addConstructionLater')}</Text>
+      <Button label={t('addConstruction')} onPress={() => router.push(`/project/${project.id}/construction/new`)} />
       {error ? <Text style={{ color: theme.colors.danger, ...theme.type.body }}>{error}</Text> : null}
       <Button label={t('deleteProject')} variant="danger" onPress={() => setConfirming(true)} />
       <ConfirmDialog

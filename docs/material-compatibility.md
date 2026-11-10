@@ -31,4 +31,6 @@ Die Prüfung steht in `catalog/compatibility.ts`. `assessCompatibility` vergleic
 | 1, an der Unterkonstruktion | `board-osb3-15` | `backing` |
 | 2, raumseitig | `gk-12-5` | `finish` |
 
-Weitere OSB-Dicken sind `board-osb3-12` und `board-osb3-18`. Die Gipslage kann später auf eine andere Gips-ID zeigen. Die Schraube der OSB-Lage und die Schraube der Gipslage sind getrennte Katalogeinträge.
+Weitere OSB-Dicken sind `board-osb3-12` und `board-osb3-18`. Die Gipslage kann auf eine andere Gips-ID zeigen. Die Schraube der OSB-Lage und die Schraube der Gipslage sind getrennte Katalogeinträge.
+
+Der Konfigurator speichert OSB und Gipskarton als zwei Schichten mit eigenen IDs. `fastenersFor('osb-on-metal')` liefert keine kompatible Schraube. Die App bietet deshalb keine Schraube an und setzt den Befestigungsstatus der OSB-Lage auf `not-assessed`. Die Gipslage auf der OSB-Platte bleibt ebenfalls `not-assessed`, weil dafür kein geprüfter Systemaufbau vorliegt. Eine technische Freigabe gibt es erst, wenn eine belastbare Quelle die Befestigung von OSB auf Metall belegt. Details stehen in [wall-configurator.md](wall-configurator.md).

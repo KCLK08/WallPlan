@@ -1,13 +1,17 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
+import { parseSavedWall } from '@/construction/wallRules';
 import type { ConstructionRecord, Project, ProjectStatus } from '@/types/project';
 
 import {
   deleteConstructionsSql,
+  deleteOneConstructionSql,
   deleteProjectSql,
+  insertConstructionSql,
   insertProjectSql,
   listConstructionsSql,
   listProjectsSql,
+  updateConstructionSql,
   updateProjectSql,
 } from './projectSql';
 
@@ -25,6 +29,7 @@ type ConstructionRow = {
   project_id: string;
   type: string;
   name: string;
+  data_json: string;
   created_at: string;
   updated_at: string;
 };
@@ -52,14 +57,16 @@ export function mapProject(row: ProjectRow, constructions: ConstructionRecord[] 
   };
 }
 
-function mapConstruction(row: ConstructionRow): ConstructionRecord {
+export function mapConstruction(row: ConstructionRow): ConstructionRecord {
+  const data = parseSavedWall(row.data_json);
   return {
     id: row.id,
     projectId: row.project_id,
     type: row.type,
-    name: row.name,
+    name: data?.name || row.name,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    data,
   };
 }
 
@@ -113,6 +120,59 @@ export async function updateProject(db: SQLiteDatabase, project: Project): Promi
       throw error;
     }
     throw new ProjectWriteError(error instanceof Error ? error.message : 'project-update-failed');
+  }
+}
+
+export async function insertConstruction(db: SQLiteDatabase, row: ConstructionRecord): Promise<void> {
+  try {
+    await db.runAsync(
+      insertConstructionSql,
+      row.id,
+      row.projectId,
+      row.type,
+      row.name,
+      JSON.stringify(row.data ?? {}),
+      row.createdAt,
+      row.updatedAt,
+    );
+  } catch (error) {
+    throw new ProjectWriteError(error instanceof Error ? error.message : 'construction-insert-failed');
+  }
+}
+
+export async function updateConstruction(db: SQLiteDatabase, row: ConstructionRecord): Promise<void> {
+  try {
+    const result = await db.runAsync(
+      updateConstructionSql,
+      row.type,
+      row.name,
+      JSON.stringify(row.data ?? {}),
+      row.updatedAt,
+      row.id,
+      row.projectId,
+    );
+    if (result.changes === 0) {
+      throw new ProjectWriteError('construction-missing');
+    }
+  } catch (error) {
+    if (error instanceof ProjectWriteError) {
+      throw error;
+    }
+    throw new ProjectWriteError(error instanceof Error ? error.message : 'construction-update-failed');
+  }
+}
+
+export async function deleteConstruction(db: SQLiteDatabase, projectId: string, id: string): Promise<void> {
+  try {
+    const result = await db.runAsync(deleteOneConstructionSql, id, projectId);
+    if (result.changes === 0) {
+      throw new ProjectWriteError('construction-missing');
+    }
+  } catch (error) {
+    if (error instanceof ProjectWriteError) {
+      throw error;
+    }
+    throw new ProjectWriteError(error instanceof Error ? error.message : 'construction-delete-failed');
   }
 }
 

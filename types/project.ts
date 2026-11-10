@@ -1,10 +1,10 @@
 export type ProjectStatus = 'active';
 
+import type { SavedWall } from '@/construction/wallModel';
+
 /**
- * A saved construction row. Phase 4 keeps the table and this shape so a
- * project can own several constructions later. Dimensions, profiles,
- * cladding, insulation, openings and material references are not written yet.
- * They belong in the reserved `data_json` column.
+ * A saved construction row. The configuration payload lives in `data_json`.
+ * `data` is null when that payload is empty or not a known wall.
  */
 export type ConstructionRecord = {
   id: string;
@@ -13,6 +13,7 @@ export type ConstructionRecord = {
   name: string;
   createdAt: string;
   updatedAt: string;
+  data: SavedWall | null;
 };
 
 export type Project = {

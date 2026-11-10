@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0] - 2026-11-10
+
+### Added
+
+- Konfigurator für eine Metallständer-Trennwand mit Maßen, Profilen, Beplankung, Dämmung und Türöffnungen
+- Speicherung in `constructions.data_json`, Konfigurationsversion 1
+- Schematische Wandansicht, getrennt von der späteren 3D-Ansicht
+
 ## [0.4.0] - 2026-11-10
 
 ### Added
