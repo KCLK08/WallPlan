@@ -85,21 +85,9 @@ Three.js 0.187 leitet `require('three')` auf `three.cjs` um. Die erste Zeile ruf
 
 ## Expo Go auf Android
 
-**Nicht auf einem Gerät oder Emulator ausgeführt.** Diese Umgebung hat kein Android-SDK, keinen Emulator und kein angeschlossenes Telefon. Deshalb wird nicht behauptet, dass die 3D-Szene in Expo Go bereits gesehen wurde.
+Auf einem Gerät wurde die Szene sichtbar. Drehen und Zoomen über den nativen Gesture Handler haben Expo Go beendet. Die Steuerung liegt deshalb im JavaScript-Responder: ein Finger dreht, zwei Finger zoomen und verschieben. Ungültige Koordinaten ändern die Kamera nicht, damit keine NaN-Matrix an OpenGL geht.
 
-Was dafür spricht, dass derselbe Prototyp in Expo Go starten kann:
-
-- Der Android-Bundle enthält den Native-Renderer.
-- `expo-gl` 58 ist in Expo Go enthalten und für Three.js r163+ korrigiert.
-- Die Geometrie und die Steuerung sind nicht an WebGL im Browser gebunden. Auf dem Gerät zeichnet `expo-gl`.
-
-Was offen bleibt, bis ein Android-Gerät den QR-Code öffnet:
-
-- Ob der GL-Kontext auf dem konkreten Gerät erscheint
-- Ob Ein-Finger-Drehen, Zwei-Finger-Verschieben und Aufziehen flüssig sind
-- Ob die New Architecture von React Native 0.88 auf diesem Gerät eine leere Fläche zeigt
-
-Ein Fehlschlag auf dem Gerät wäre ein Grund, den Native-Einstieg auf eine imperative `GLView` mit demselben `buildMetalStudWall` umzustellen. Die Geometrie ist dafür schon von React Three Fiber getrennt.
+Offen bleibt die Bildrate auf dem Gerät und ein erneuter Gestentest nach diesem Wechsel. Ein leerer GL-Kontext würde weiter auf eine imperative `GLView` mit demselben `buildMetalStudWall` führen.
 
 ## Performance
 
@@ -110,7 +98,7 @@ Die Prototyp-Szene hat 25 Meshes und eine einfache Beleuchtung. Auf SwiftShader 
 - Kein Nachweis auf echter Android-Hardware.
 - iOS wurde nicht gebaut und nicht in Expo Go geöffnet.
 - Die Web-Datenbank braucht in Metro die Dateiendung `.wasm` und die Header `Cross-Origin-Opener-Policy: same-origin` sowie `Cross-Origin-Embedder-Policy: credentialless`. Das steht in `metro.config.js` und betrifft nur die Web-Variante von `expo-sqlite`.
-- Gesten auf dem Gerät sind an `react-native-gesture-handler` gebunden. Im Web ersetzen Maus, Mausrad und die Umschalttaste die Touch-Gesten.
+- Drehen und Zoomen laufen über den JavaScript-Responder, nicht über den nativen Gesture Handler. Im Web bleiben Maus, Mausrad und die Umschalttaste.
 - `@react-three/drei` wurde nicht aufgenommen. Die Kamera ist eine eigene Kugelkoordinaten-Steuerung, damit keine zusätzliche native Abhängigkeit entsteht.
 
 ## Empfehlung

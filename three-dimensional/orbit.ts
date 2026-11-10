@@ -33,12 +33,18 @@ export function orbitPosition(camera: OrbitCamera): [number, number, number] {
 }
 
 export function rotateOrbit(camera: OrbitCamera, deltaX: number, deltaY: number): void {
+  if (!Number.isFinite(deltaX) || !Number.isFinite(deltaY)) {
+    return;
+  }
   camera.theta -= deltaX * 0.008;
   const nextPhi = camera.phi - deltaY * 0.008;
   camera.phi = Math.min(MAX_PHI, Math.max(MIN_PHI, nextPhi));
 }
 
 export function panOrbit(camera: OrbitCamera, deltaX: number, deltaY: number): void {
+  if (!Number.isFinite(deltaX) || !Number.isFinite(deltaY)) {
+    return;
+  }
   const { right, up } = cameraBasis(camera.theta, camera.phi);
   const scale = camera.radius * 0.0016;
   camera.targetX -= (right.x * deltaX + up.x * deltaY) * scale;

@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import { GestureDetector, usePanGesture, usePinchGesture, useSimultaneousGestures } from 'react-native-gesture-handler';
+import { Platform, Pressable, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
 
 import { catalogName } from '@/catalog/prototypeMaterials';
 import { studOffsetsMm } from '@/calculations/studLayout';
@@ -11,8 +10,9 @@ import { METAL_STUD_TEST_WALL } from '@/construction/metalStudPartition';
 import { useSettingsStore } from '@/store/settingsStore';
 
 import { CanvasErrorBoundary } from './CanvasErrorBoundary';
-import { createInitialCamera, panOrbit, rotateOrbit, zoomOrbit } from './orbit';
+import { createInitialCamera } from './orbit';
 import { pointerModifiers } from './pointerModifiers';
+import { applyTouchSample, createTouchMemory, resetTouchMemory, type TouchPoint } from './touchOrbit';
 import { useWheelZoom } from './useWheelZoom';
 import { WallCanvas } from './WallCanvas';
 
@@ -25,33 +25,21 @@ export function PrototypeViewport() {
   const t = (key: Parameters<typeof translate>[1]) => translate(language, key);
   const [showBoard, setShowBoard] = useState(true);
   const cameraRef = useRef(createInitialCamera(wallLengthM, wallHeightM));
+  const touchMemory = useRef(createTouchMemory());
   useWheelZoom(cameraRef);
 
-  const rotate = usePanGesture({
-    maxPointers: 1,
-    onUpdate: (event) => {
-      if (pointerModifiers.shift) {
-        panOrbit(cameraRef.current, event.changeX, event.changeY);
-        return;
-      }
-      rotateOrbit(cameraRef.current, event.changeX, event.changeY);
-    },
-  });
-  const pan = usePanGesture({
-    minPointers: 2,
-    maxPointers: 2,
-    onUpdate: (event) => {
-      panOrbit(cameraRef.current, event.changeX, event.changeY);
-    },
-  });
-  const pinch = usePinchGesture({
-    onUpdate: (event) => {
-      if (event.scaleChange > 0) {
-        zoomOrbit(cameraRef.current, 1 / event.scaleChange);
-      }
-    },
-  });
-  const gesture = useSimultaneousGestures(rotate, pan, pinch);
+  function handleTouch(event: GestureResponderEvent) {
+    const touches = event.nativeEvent.touches;
+    const points: TouchPoint[] =
+      touches.length > 0
+        ? touches.map((touch) => ({ x: touch.pageX, y: touch.pageY }))
+        : [{ x: event.nativeEvent.pageX, y: event.nativeEvent.pageY }];
+    applyTouchSample(cameraRef.current, touchMemory.current, points, pointerModifiers.shift);
+  }
+
+  function endTouch() {
+    resetTouchMemory(touchMemory.current);
+  }
   const studCount = studOffsetsMm(METAL_STUD_TEST_WALL.lengthMm, METAL_STUD_TEST_WALL.studSpacingMm).length;
   const lengthLabel = formatLength(METAL_STUD_TEST_WALL.lengthMm, units, language);
   const heightLabel = formatLength(METAL_STUD_TEST_WALL.heightMm, units, language);
@@ -61,9 +49,17 @@ export function PrototypeViewport() {
       <CanvasErrorBoundary message={t('canvasError')}>
         <WallCanvas showBoard={showBoard} cameraRef={cameraRef} />
       </CanvasErrorBoundary>
-      <GestureDetector gesture={gesture}>
-        <View collapsable={false} style={styles.gestureLayer} />
-      </GestureDetector>
+      <View
+        collapsable={false}
+        style={styles.gestureLayer}
+        onStartShouldSetResponder={() => true}
+        onMoveShouldSetResponder={() => true}
+        onResponderTerminationRequest={() => false}
+        onResponderGrant={handleTouch}
+        onResponderMove={handleTouch}
+        onResponderRelease={endTouch}
+        onResponderTerminate={endTouch}
+      />
       <View pointerEvents="none" style={styles.caption}>
         <Text style={styles.captionTitle}>{t('testWall')}</Text>
         <Text style={styles.captionBody}>
@@ -94,7 +90,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   gestureLayer: {
-    ...StyleSheet.absoluteFill,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
   },
   caption: {
     position: 'absolute',
