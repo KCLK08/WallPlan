@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0] - 2026-11-10
+
+### Added
+
+- Materialberechnung für eine gespeicherte Metallständerwand, Berechnungsversion 1
+- Materialliste mit Unterkonstruktion, Beplankung, Dämmung, Befestigung und unvollständigen Positionen
+- Die Liste wird beim Öffnen neu gerechnet und nicht in SQLite gespeichert
+
 ## [0.5.0] - 2026-11-10
 
 ### Added

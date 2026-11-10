@@ -1,6 +1,6 @@
 {
   "name": "wallplan",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test calculations/*.test.ts three-dimensional/*.test.ts catalog/*.test.ts construction/*.test.ts database/*.test.ts features/projects/*.test.ts"
+    "test": "tsx --test calculations/*.test.ts calculations/material/*.test.ts three-dimensional/*.test.ts catalog/*.test.ts construction/*.test.ts database/*.test.ts features/projects/*.test.ts"
   },
   "dependencies": {
     "@react-three/fiber": "9.8.2",
