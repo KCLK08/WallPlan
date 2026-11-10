@@ -2,18 +2,21 @@ import type { RefObject } from 'react';
 
 import type { OrbitCamera } from './orbit';
 import type { SceneBox } from './geometry/types';
+import type { MeasureLine } from './inspection/inspectionTypes';
 import { SavedWallScene } from './SavedWallScene';
 import { Canvas } from './wallFiber';
 
 type SavedWallCanvasProps = {
   boxes: readonly SceneBox[];
+  selected: readonly SceneBox[];
+  measures: readonly MeasureLine[];
   cameraRef: RefObject<OrbitCamera>;
   lengthMm: number;
   heightMm: number;
   orthographic: boolean;
 };
 
-export function SavedWallCanvas({ boxes, cameraRef, lengthMm, heightMm, orthographic }: SavedWallCanvasProps) {
+export function SavedWallCanvas({ boxes, selected, measures, cameraRef, lengthMm, heightMm, orthographic }: SavedWallCanvasProps) {
   return (
     <Canvas
       key={orthographic ? 'ortho' : 'perspective'}
@@ -27,6 +30,8 @@ export function SavedWallCanvas({ boxes, cameraRef, lengthMm, heightMm, orthogra
     >
       <SavedWallScene
         boxes={boxes}
+        selected={selected}
+        measures={measures}
         cameraRef={cameraRef}
         lengthMm={lengthMm}
         heightMm={heightMm}

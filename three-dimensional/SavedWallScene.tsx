@@ -6,21 +6,28 @@ import type { OrbitCamera } from './orbit';
 import { orbitPosition } from './orbit';
 import { buildSceneGroup, disposeSceneGroup } from './geometry/buildSceneGroup';
 import type { SceneBox } from './geometry/types';
+import { buildOverlay, disposeOverlay } from './inspection/overlayGroup';
+import type { MeasureLine } from './inspection/inspectionTypes';
+import { orthographicZoom } from './inspection/viewCamera';
 import { useFrame, useThree } from './wallFiber';
 
 type SavedWallSceneProps = {
   boxes: readonly SceneBox[];
+  selected: readonly SceneBox[];
+  measures: readonly MeasureLine[];
   cameraRef: RefObject<OrbitCamera>;
   lengthMm: number;
   heightMm: number;
   orthographic: boolean;
 };
 
-export function SavedWallScene({ boxes, cameraRef, lengthMm, heightMm, orthographic }: SavedWallSceneProps) {
+export function SavedWallScene({ boxes, selected, measures, cameraRef, lengthMm, heightMm, orthographic }: SavedWallSceneProps) {
   const group = useMemo(() => buildSceneGroup(boxes), [boxes]);
+  const overlay = useMemo(() => buildOverlay(selected, measures), [selected, measures]);
   const { camera, size } = useThree();
 
   useEffect(() => () => disposeSceneGroup(group), [group]);
+  useEffect(() => () => disposeOverlay(overlay), [overlay]);
 
   useFrame(() => {
     const view = cameraRef.current;
@@ -31,10 +38,7 @@ export function SavedWallScene({ boxes, cameraRef, lengthMm, heightMm, orthograp
     camera.position.set(x, y, z);
     camera.lookAt(view.targetX, view.targetY, view.targetZ);
     if (orthographic && camera instanceof OrthographicCamera) {
-      const span = (Math.max(lengthMm, heightMm) / 1000) * 1.35;
-      const fitted = Math.min(size.width, size.height) / Math.max(span, 0.2);
-      const frame = view.frameRadius ?? view.radius;
-      camera.zoom = fitted * (frame / Math.max(view.radius, 0.2));
+      camera.zoom = orthographicZoom(lengthMm, heightMm, size.width, size.height, view.radius, view.frameRadius ?? view.radius);
       camera.updateProjectionMatrix();
     }
   });
@@ -46,6 +50,7 @@ export function SavedWallScene({ boxes, cameraRef, lengthMm, heightMm, orthograp
       <directionalLight position={[4, 7, 5]} intensity={1.15} />
       <directionalLight position={[-4, 3, -3]} intensity={0.45} />
       <primitive object={group} />
+      <primitive object={overlay} />
     </>
   );
 }

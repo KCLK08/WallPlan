@@ -35,7 +35,7 @@ Die Farben trennen nur die Bauteile. Sie sind keine Materialeigenschaft. Die Ans
 
 ## Bedienung
 
-Drehen, Zoomen und Verschieben laufen über denselben JavaScript-Responder wie der Prototyp: ein Finger dreht, zwei Finger zoomen und verschieben. Im Web bleiben Maus, Mausrad und Umschalt-Ziehen. Perspektive und Parallelprojektion, Zurücksetzen und die sechs Ansichtsmodi ändern nur die Kamera und die Sichtbarkeit.
+Drehen, Zoomen und Verschieben laufen über denselben JavaScript-Responder wie der Prototyp. Ein kurzes Tippen wählt ein Bauteil, eine Bewegung ab etwa 12 px dreht, zwei Finger zoomen und verschieben. Im Web bleiben Maus, Mausrad und Umschalt-Ziehen. Perspektive und Parallelprojektion, Zurücksetzen und die sechs Ansichtsmodi ändern nur die Kamera und die Sichtbarkeit. Die Inspektion steht in [docs/3d-inspection.md](3d-inspection.md).
 
 Schattenkarten sind aus. In Phase 2 waren sie auf Expo Go nicht zuverlässig, und eine flackernde Schattenkarte wäre eine Scheinlösung. Zwei gerichtete Lichter und ein Umgebungslicht modellieren die Körper.
 
