@@ -1,5 +1,7 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
+import { CATALOG_VERSION } from '@/catalog/version';
+
 export async function initializeDatabase(db: SQLiteDatabase): Promise<void> {
   try {
     await db.execAsync('PRAGMA journal_mode = WAL;');
@@ -19,5 +21,14 @@ export async function initializeDatabase(db: SQLiteDatabase): Promise<void> {
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS app_meta (
+      key TEXT PRIMARY KEY NOT NULL,
+      value TEXT NOT NULL
+    );
   `);
+  await db.runAsync(
+    `INSERT INTO app_meta (key, value) VALUES ('catalog_version', ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+    CATALOG_VERSION,
+  );
 }

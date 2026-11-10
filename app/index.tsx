@@ -31,6 +31,13 @@ export default function HomeScreen() {
             <Text style={{ color: theme.colors.steel, ...theme.type.body }}>{t('homeLead')}</Text>
           </View>
           <Button label={t('newProject')} onPress={() => router.push('/new-project')} />
+          <Card onPress={() => router.push('/catalog')}>
+            <Text style={{ color: theme.colors.ink, fontSize: 18, lineHeight: 24, fontWeight: '700' }}>{t('catalogTitle')}</Text>
+            <Text style={{ color: theme.colors.steel, ...theme.type.body }}>{t('catalogLead')}</Text>
+            <Text style={{ color: theme.colors.accentPressed, fontSize: 15, lineHeight: 20, fontWeight: '700' }}>
+              {t('openCatalog')}
+            </Text>
+          </Card>
           <Card onPress={() => router.push('/prototype')}>
             <Text style={{ color: theme.colors.ink, fontSize: 18, lineHeight: 24, fontWeight: '700' }}>
               {t('prototypeTitle')}

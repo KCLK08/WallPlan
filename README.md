@@ -2,7 +2,7 @@
 
 Private Offline-App zur 3D-Planung von Trockenbaukonstruktionen. Es gibt kein Konto, kein Backend und keine Cloud. Projekte und Einstellungen liegen in einer lokalen SQLite-Datenbank.
 
-Der fachliche Ausbau der Metallständer-Trennwand folgt in späteren Phasen. Diese Version enthält das Expo-Grundgerüst, die ersten Screens und einen 3D-Prototypen mit festen Testmaßen.
+Der fachliche Ausbau der Metallständer-Trennwand folgt in späteren Phasen. Diese Version enthält das Expo-Grundgerüst, die ersten Screens, einen 3D-Prototypen mit festen Testmaßen und den lokalen Materialkatalog 3.0.0.
 
 ## Technologiestack
 
@@ -20,6 +20,8 @@ Der fachliche Ausbau der Metallständer-Trennwand folgt in späteren Phasen. Die
 | React Three Fiber | 9.8.2 |
 
 SDK 58 ist die Version, die Expo Go aus dem Play Store im November 2026 öffnet. Die Bewertung der 3D-Lösung steht in [docs/3d-technology-evaluation.md](docs/3d-technology-evaluation.md). Die Architekturentscheidung aus Phase 1 steht in [docs/PHASE-1-ANALYSE.md](docs/PHASE-1-ANALYSE.md).
+
+Der Materialkatalog ist nur lesbar, offline und ohne Preise. Quellen, Datenmodell und Kompatibilität stehen in [docs/material-catalog-sources.md](docs/material-catalog-sources.md), [docs/material-catalog-data-model.md](docs/material-catalog-data-model.md) und [docs/material-compatibility.md](docs/material-compatibility.md).
 
 ## Installation
 
@@ -62,7 +64,7 @@ app/                 Screens und Navigation (Expo Router)
 components/          Wiederverwendbare Oberfläche
 features/            Anwendungsfälle, derzeit Projekte anlegen
 construction/        Konstruktionsdaten des Prototyps
-catalog/             Lokale Materialbezeichnungen des Prototyps
+catalog/             Lokaler Materialkatalog, Version und Kompatibilitätsregeln
 calculations/        Ständerabstände und Maßangaben
 three-dimensional/   Geometrie, Kamera und 3D-Ansicht
 database/            SQLite-Schema und Zugriffe
@@ -79,3 +81,10 @@ docs/                Technische Dokumentation
 - Neues Projekt mit Name und optionaler Beschreibung
 - Einstellungen für Sprache, Maßeinheit und Hell-/Dunkelmodus
 - 3D-Prototyp einer Metallständer-Trennwand
+- Materialkatalog mit Suche, Kategorien und technischen Details
+
+## Materialkatalog
+
+Version 3.0.0, 88 Einträge, mit der App ausgeliefert. SQLite merkt sich nur die Katalogversion in `app_meta`. Die Einträge selbst liegen nicht ein zweites Mal in der Datenbank.
+
+Der Katalog unterscheidet belegte Herstellerwerte, Normklassen und leere Felder. Ungeprüfte Kombinationen gelten nicht als geeignet. OSB und Gipskarton sind getrennte Schichten. Eine Schraube für OSB auf Metall ist nicht belegt und wird nicht als passend angeboten.
