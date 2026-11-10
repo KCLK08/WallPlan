@@ -79,6 +79,10 @@ Im Browser geprüft:
 
 `npx expo-doctor` meldet 20 von 20 Prüfungen ohne Befund. `npx tsc --noEmit` ist ohne Fehler.
 
+## Expo-Go-Import von Three.js
+
+Three.js 0.187 leitet `require('three')` auf `three.cjs` um. Die erste Zeile ruft `process.emitWarning` auf. In Expo Go ist diese Funktion nicht vorhanden, der Import endet mit `undefined is not a function`. `metro.config.js` löst `three` deshalb auf `build/three.module.js` auf. Das ist derselbe ESM-Build, den der Web-Bundler bereits verwendet.
+
 ## Expo Go auf Android
 
 **Nicht auf einem Gerät oder Emulator ausgeführt.** Diese Umgebung hat kein Android-SDK, keinen Emulator und kein angeschlossenes Telefon. Deshalb wird nicht behauptet, dass die 3D-Szene in Expo Go bereits gesehen wurde.
