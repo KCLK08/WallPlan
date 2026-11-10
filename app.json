@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "WallPlan",
+    "slug": "wallplan",
+    "version": "0.2.0",
+    "orientation": "default",
+    "icon": "./assets/images/icon.png",
+    "scheme": "wallplan",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.wallplan.app",
+      "icon": "./assets/expo.icon"
+    },
+    "android": {
+      "package": "com.wallplan.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#1C1F24",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1C1F24",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 76
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
