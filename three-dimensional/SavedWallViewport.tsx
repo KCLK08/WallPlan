@@ -3,6 +3,7 @@ import { Platform, Pressable, ScrollView, Text, useWindowDimensions, View, type 
 
 import { findMaterial } from '@/catalog/materials';
 import { useAppTheme } from '@/components/useAppTheme';
+import { inspectionText } from '@/constants/inspectionCopy';
 import { translate } from '@/constants/i18n';
 import { modelText, viewModeLabel } from '@/constants/modelCopy';
 import type { SavedWall } from '@/construction/wallModel';
@@ -12,10 +13,14 @@ import { CanvasErrorBoundary } from './CanvasErrorBoundary';
 import { GEOMETRY_COLORS, type LayerToggles, type ViewMode } from './geometry/types';
 import { buildWallGeometry } from './geometry/wallGeometry';
 import { cameraAngles, displayBoxes, togglesFor } from './geometry/view';
+import { formatMillimetres, inspectPart } from './inspection/inspectionData';
+import { isolateBoard, measureLines, revealBoards } from './inspection/measurementGeometry';
+import { nextSelection, pickSelection, selectionIdForBox, type ScreenPoint } from './inspection/selection';
+import { InspectionPanel } from './InspectionPanel';
 import { frameWallCamera } from './orbit';
 import { pointerModifiers } from './pointerModifiers';
 import { SavedWallCanvas } from './SavedWallCanvas';
-import { applyTouchSample, createTouchMemory, resetTouchMemory, type TouchPoint } from './touchOrbit';
+import { applyTouchSample, consumeTap, createTouchMemory, resetTouchMemory, type TouchPoint } from './touchOrbit';
 import { useWheelZoom } from './useWheelZoom';
 
 const modes: ViewMode[] = ['complete', 'side-a', 'side-b', 'construction', 'layers', 'exploded'];
@@ -23,31 +28,68 @@ const modes: ViewMode[] = ['complete', 'side-a', 'side-b', 'construction', 'laye
 export function SavedWallViewport({ wall }: { wall: SavedWall }) {
   const theme = useAppTheme();
   const language = useSettingsStore((state) => state.language);
-  const { height } = useWindowDimensions();
-  const stageHeight = Math.max(280, Math.min(560, Math.round(height * 0.48)));
+  const { height, width } = useWindowDimensions();
+  const wide = width >= 900;
+  const stageHeight = Math.max(280, Math.min(560, Math.round(height * (wide ? 0.62 : 0.46))));
   const geometry = useMemo(() => buildWallGeometry(wall), [wall]);
   const [mode, setMode] = useState<ViewMode>('complete');
   const [toggles, setToggles] = useState<LayerToggles>(() => togglesFor('complete', geometry));
   const [orthographic, setOrthographic] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showMeasures, setShowMeasures] = useState(false);
+  const [viewport, setViewport] = useState({ width: 0, height: 0 });
   const cameraRef = useRef(frameWallCamera(geometry.lengthMm / 1000, geometry.heightMm / 1000, geometry.nominalDepthMm / 1000));
   const touchMemory = useRef(createTouchMemory());
+  const tapPoint = useRef<ScreenPoint | null>(null);
   useWheelZoom(cameraRef);
   const boxes = useMemo(() => displayBoxes(geometry, mode, toggles), [geometry, mode, toggles]);
+  const selected = useMemo(
+    () => (selectedId ? boxes.filter((box) => selectionIdForBox(box) === selectedId) : []),
+    [boxes, selectedId],
+  );
+  const measures = useMemo(
+    () => (showMeasures ? measureLines(wall, geometry, toggles) : []),
+    [showMeasures, wall, geometry, toggles],
+  );
+  const record = useMemo(() => (selectedId ? inspectPart(wall, geometry, selectedId) : null), [wall, geometry, selectedId]);
 
   useEffect(() => {
     const next = frameWallCamera(geometry.lengthMm / 1000, geometry.heightMm / 1000, geometry.nominalDepthMm / 1000);
     Object.assign(cameraRef.current, next);
     setMode('complete');
     setToggles(togglesFor('complete', geometry));
+    setSelectedId(null);
   }, [geometry]);
 
-  function handleTouch(event: GestureResponderEvent) {
+  function touchPoints(event: GestureResponderEvent): TouchPoint[] {
     const touches = event.nativeEvent.touches;
-    const points: TouchPoint[] =
-      touches.length > 0
-        ? touches.map((touch) => ({ x: touch.pageX, y: touch.pageY }))
-        : [{ x: event.nativeEvent.pageX, y: event.nativeEvent.pageY }];
-    applyTouchSample(cameraRef.current, touchMemory.current, points, pointerModifiers.shift);
+    return touches.length > 0
+      ? touches.map((touch) => ({ x: touch.pageX, y: touch.pageY }))
+      : [{ x: event.nativeEvent.pageX, y: event.nativeEvent.pageY }];
+  }
+
+  function handleGrant(event: GestureResponderEvent) {
+    tapPoint.current = { x: event.nativeEvent.locationX, y: event.nativeEvent.locationY };
+    applyTouchSample(cameraRef.current, touchMemory.current, touchPoints(event), pointerModifiers.shift);
+  }
+
+  function handleMove(event: GestureResponderEvent) {
+    applyTouchSample(cameraRef.current, touchMemory.current, touchPoints(event), pointerModifiers.shift);
+  }
+
+  function handleRelease() {
+    const tap = consumeTap(touchMemory.current);
+    const point = tapPoint.current;
+    tapPoint.current = null;
+    if (!tap || !point || viewport.width < 2 || viewport.height < 2) {
+      return;
+    }
+    const picked = pickSelection(boxes, cameraRef.current, viewport, point, {
+      orthographic,
+      lengthMm: geometry.lengthMm,
+      heightMm: geometry.heightMm,
+    });
+    setSelectedId((current) => nextSelection(current, picked));
   }
 
   function chooseMode(next: ViewMode) {
@@ -69,12 +111,36 @@ export function SavedWallViewport({ wall }: { wall: SavedWall }) {
 
   const boardLayers = uniqueBoardLayers(geometry.boxes, language);
 
+  const boardSelection = selectedId?.match(/^board-([AB])-(.+)$/);
+
+  function isolateSelection() {
+    if (!boardSelection) {
+      return;
+    }
+    setToggles((current) => isolateBoard(current, boardSelection[2], boardSelection[1] as 'A' | 'B'));
+  }
+
   return (
     <View style={{ flex: 1, gap: 8 }}>
-      <View style={{ height: stageHeight, borderRadius: theme.radius.card, overflow: 'hidden', backgroundColor: theme.colors.stage }}>
+      <View style={{ flexDirection: wide ? 'row' : 'column', gap: 8 }}>
+      <View
+        onLayout={(event) => {
+          const next = { width: event.nativeEvent.layout.width, height: event.nativeEvent.layout.height };
+          setViewport((current) => (current.width === next.width && current.height === next.height ? current : next));
+        }}
+        style={{
+          height: wide ? Math.max(stageHeight, 360) : stageHeight,
+          flex: wide ? 1 : undefined,
+          borderRadius: theme.radius.card,
+          overflow: 'hidden',
+          backgroundColor: theme.colors.stage,
+        }}
+      >
         <CanvasErrorBoundary message={translate(language, 'canvasError')}>
           <SavedWallCanvas
             boxes={boxes}
+            selected={selected}
+            measures={measures}
             cameraRef={cameraRef}
             lengthMm={geometry.lengthMm}
             heightMm={geometry.heightMm}
@@ -87,14 +153,29 @@ export function SavedWallViewport({ wall }: { wall: SavedWall }) {
           onStartShouldSetResponder={() => true}
           onMoveShouldSetResponder={() => true}
           onResponderTerminationRequest={() => false}
-          onResponderGrant={handleTouch}
-          onResponderMove={handleTouch}
-          onResponderRelease={() => resetTouchMemory(touchMemory.current)}
-          onResponderTerminate={() => resetTouchMemory(touchMemory.current)}
+          onResponderGrant={handleGrant}
+          onResponderMove={handleMove}
+          onResponderRelease={handleRelease}
+          onResponderTerminate={() => {
+            tapPoint.current = null;
+            resetTouchMemory(touchMemory.current);
+          }}
         />
         <Text pointerEvents="none" style={{ position: 'absolute', left: 12, right: 12, bottom: 10, color: '#C5CAD1', fontSize: 13, lineHeight: 18 }}>
           {Platform.OS === 'web' ? modelText(language, 'hintWeb') : modelText(language, 'hintTouch')}
         </Text>
+      </View>
+      {record ? (
+        <InspectionPanel
+          record={record}
+          language={language}
+          wide={wide}
+          canIsolate={Boolean(boardSelection)}
+          onClear={() => setSelectedId(null)}
+          onIsolate={isolateSelection}
+          onReveal={() => setToggles((current) => revealBoards(current, geometry))}
+        />
+      ) : null}
       </View>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 12, paddingBottom: 20 }}>
         <Text style={{ color: theme.colors.steel, ...theme.type.body }}>{modelText(language, 'intro')}</Text>
@@ -108,7 +189,23 @@ export function SavedWallViewport({ wall }: { wall: SavedWall }) {
           <Chip label={modelText(language, 'perspective')} selected={!orthographic} onPress={() => setOrthographic(false)} />
           <Chip label={modelText(language, 'orthographic')} selected={orthographic} onPress={() => setOrthographic(true)} />
           <Chip label={modelText(language, 'reset')} selected={false} onPress={reset} />
+          <Chip
+            label={showMeasures ? inspectionText(language, 'measuresOn') : inspectionText(language, 'measures')}
+            selected={showMeasures}
+            onPress={() => setShowMeasures((current) => !current)}
+          />
         </View>
+        {showMeasures ? (
+          <View style={{ gap: 4 }}>
+            <Text style={{ color: theme.colors.steel, ...theme.type.label }}>{inspectionText(language, 'measures')}</Text>
+            {measures.map((measure) => (
+              <Text key={measure.id} style={{ color: theme.colors.ink, ...theme.type.body }}>
+                {`${language === 'de' ? measure.labelDe : measure.labelEn}: ${formatMillimetres(measure.lengthMm, language)}`}
+              </Text>
+            ))}
+            <Text style={{ color: theme.colors.steel, ...theme.type.body }}>{inspectionText(language, 'measureNote')}</Text>
+          </View>
+        ) : null}
         <Text style={{ color: theme.colors.steel, ...theme.type.label }}>{modelText(language, 'layers')}</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           <Chip label={modelText(language, 'layerUw')} selected={toggles.uw} onPress={() => setToggles((current) => ({ ...current, uw: !current.uw }))} />

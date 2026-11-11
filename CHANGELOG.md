@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.0] - 2026-11-10
+
+### Added
+
+- Auswahl einzelner Profile, Beplankungslagen, Dämmfelder und Türöffnungen in der 3D-Ansicht
+- Informationspanel aus der gespeicherten Wand und dem Katalog, ohne zweite Datenhaltung
+- Optionale Maßlinien für Wand, Profilabstand, Tür und sichtbare Schichtdicken
+
 ## [0.7.0] - 2026-11-10
 
 ### Added

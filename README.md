@@ -2,7 +2,7 @@
 
 Private Offline-App zur 3D-Planung von Trockenbaukonstruktionen. Es gibt kein Konto, kein Backend und keine Cloud. Projekte und Einstellungen liegen in einer lokalen SQLite-Datenbank.
 
-Diese Version enthält das Grundgerüst, den 3D-Prototypen, den Materialkatalog 3.0.0, die lokale Projektverwaltung und den Konfigurator für eine Metallständer-Trennwand. Die echte 3D-Ansicht der konfigurierten Wand folgt später.
+Diese Version enthält das Grundgerüst, den 3D-Prototypen, den Materialkatalog 3.0.0, die lokale Projektverwaltung, den Konfigurator für eine Metallständer-Trennwand, die Materialberechnung und die 3D-Ansicht mit Bauteilinspektion.
 
 ## Technologiestack
 
@@ -82,7 +82,7 @@ Ein Projekt hat eine stabile ID, Name, optionale Beschreibung, Status `active`, 
 
 Die Materialliste wird beim Ansehen neu aus dieser Wand gerechnet und nicht gespeichert. Berechnungsversion 1 steht nur im angezeigten Ergebnis. Details stehen in [docs/material-calculation.md](docs/material-calculation.md).
 
-Die 3D-Ansicht liest dieselbe Wand. Sie wird nicht gespeichert. Maße bleiben Millimeter, bis sie an der Zeichengrenze in Meter umgerechnet werden. Details stehen in [docs/3d-wall.md](docs/3d-wall.md).
+Die 3D-Ansicht liest dieselbe Wand. Sie wird nicht gespeichert. Maße bleiben Millimeter, bis sie an der Zeichengrenze in Meter umgerechnet werden. Ein Tippen liest ein Bauteil, ohne die Konstruktion zu ändern. Details stehen in [docs/3d-wall.md](docs/3d-wall.md) und [docs/3d-inspection.md](docs/3d-inspection.md).
 
 Beim Start liest die App das Schema und führt nur die fehlenden Schritte aus. Bestehende Projekte aus Phase 2 und 3 bekommen dabei die Statusspalte `active`. Die Schemaversion steht in `app_meta` unter `schema_version`. Die Katalogversion bleibt getrennt. Details stehen in [docs/project-management.md](docs/project-management.md).
 
