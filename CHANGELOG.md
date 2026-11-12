@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0] - 2026-11-12
+
+### Added
+
+- Technische 2D-Zeichnung einer gespeicherten Metallständerwand aus derselben Geometrie wie die 3D-Ansicht
+- Vorderansicht, Rückansicht, Seitenansicht, Draufsicht und Konstruktionsansicht
+- Bemaßung in Millimetern, Maßstab mit Zoom und Verschieben, Ebenen und dieselbe Bauteilauswahl wie in 3D
+
 ## [0.8.0] - 2026-11-10
 
 ### Added

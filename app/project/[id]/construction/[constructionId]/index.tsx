@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { formatLength, formatTimestamp } from '@/calculations/units';
 import { WallSchematic } from '@/components/configurator/WallSchematic';
 import { Button } from '@/components/Button';
+import { ConstructionSwitch } from '@/components/ConstructionSwitch';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
@@ -14,8 +15,6 @@ import { TopBar } from '@/components/TopBar';
 import { useAppTheme } from '@/components/useAppTheme';
 import { useTranslation } from '@/components/useTranslation';
 import { constructionText } from '@/constants/constructionCopy';
-import { materialText } from '@/constants/materialCopy';
-import { modelText } from '@/constants/modelCopy';
 import type { WallDraft } from '@/construction/wallModel';
 import { materialLabel } from '@/construction/wallRules';
 import {
@@ -139,15 +138,7 @@ export default function ConstructionScreen() {
             missingLabel={constructionText(language, 'schematicMissing')}
           />
           <Text style={{ color: theme.colors.steel, ...theme.type.body }}>{constructionText(language, 'systemNote')}</Text>
-          <Button
-            label={materialText(language, 'openList')}
-            onPress={() => router.push(`/project/${id}/construction/${construction.id}/materials`)}
-          />
-          <Button
-            label={modelText(language, 'openModel')}
-            variant="secondary"
-            onPress={() => router.push(`/project/${id}/construction/${construction.id}/model`)}
-          />
+          <ConstructionSwitch projectId={id} constructionId={construction.id} />
         </View>
       ) : (
         <Text style={{ color: theme.colors.danger, ...theme.type.body }}>{constructionText(language, 'dataMissing')}</Text>

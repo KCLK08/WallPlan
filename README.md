@@ -2,7 +2,7 @@
 
 Private Offline-App zur 3D-Planung von Trockenbaukonstruktionen. Es gibt kein Konto, kein Backend und keine Cloud. Projekte und Einstellungen liegen in einer lokalen SQLite-Datenbank.
 
-Diese Version enthält das Grundgerüst, den 3D-Prototypen, den Materialkatalog 3.0.0, die lokale Projektverwaltung, den Konfigurator für eine Metallständer-Trennwand, die Materialberechnung und die 3D-Ansicht mit Bauteilinspektion.
+Diese Version enthält das Grundgerüst, den 3D-Prototypen, den Materialkatalog 3.0.0, die lokale Projektverwaltung, den Konfigurator für eine Metallständer-Trennwand, die Materialberechnung, die 3D-Ansicht mit Bauteilinspektion und die technische 2D-Zeichnung.
 
 ## Technologiestack
 
@@ -67,6 +67,7 @@ construction/        Konstruktionsmodell, Regeln und Prototypwand
 catalog/             Lokaler Materialkatalog, Version und Kompatibilitätsregeln
 calculations/        Ständerabstände, Maßangaben und Materialberechnung
 three-dimensional/   Geometrie, Kamera und 3D-Ansicht
+two-dimensional/     Projektion, Bemaßung und 2D-Zeichnung
 database/            SQLite-Schema und Zugriffe
 store/               Zustand für Einstellungen und Projektliste
 types/               TypeScript-Typen
@@ -84,6 +85,8 @@ Die Materialliste wird beim Ansehen neu aus dieser Wand gerechnet und nicht gesp
 
 Die 3D-Ansicht liest dieselbe Wand. Sie wird nicht gespeichert. Maße bleiben Millimeter, bis sie an der Zeichengrenze in Meter umgerechnet werden. Ein Tippen liest ein Bauteil, ohne die Konstruktion zu ändern. Details stehen in [docs/3d-wall.md](docs/3d-wall.md) und [docs/3d-inspection.md](docs/3d-inspection.md).
 
+Die 2D-Zeichnung projiziert dieselben Körper. Sie bleibt in Millimetern, bis die Blattansicht sie in Bildpunkte umrechnet, und speichert keine eigene Konstruktion. Details stehen in [docs/2d-drawings.md](docs/2d-drawings.md).
+
 Beim Start liest die App das Schema und führt nur die fehlenden Schritte aus. Bestehende Projekte aus Phase 2 und 3 bekommen dabei die Statusspalte `active`. Die Schemaversion steht in `app_meta` unter `schema_version`. Die Katalogversion bleibt getrennt. Details stehen in [docs/project-management.md](docs/project-management.md).
 
 ## Screens
@@ -95,6 +98,7 @@ Beim Start liest die App das Schema und führt nur die fehlenden Schritte aus. B
 - Konfigurator für eine Metallständer-Trennwand in sieben Schritten
 - Materialliste der gespeicherten Wand, ohne Preise
 - 3D-Ansicht der gespeicherten Wand, getrennt vom Prototyp
+- Technische 2D-Zeichnung derselben Wand, mit Wechsel zur 3D-Ansicht und zur Materialliste
 - Einstellungen für Sprache, Maßeinheit und Hell-/Dunkelmodus
 - 3D-Prototyp einer Metallständer-Trennwand
 - Materialkatalog mit Suche, Kategorien und technischen Details
