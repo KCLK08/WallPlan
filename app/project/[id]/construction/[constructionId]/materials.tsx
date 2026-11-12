@@ -4,6 +4,7 @@ import { Text } from 'react-native';
 
 import { formatTimestamp } from '@/calculations/units';
 import { calculateMaterials } from '@/calculations/material/materialCalculator';
+import { ConstructionSwitch } from '@/components/ConstructionSwitch';
 import { MaterialList } from '@/components/materials/MaterialList';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
@@ -41,6 +42,7 @@ export default function MaterialListScreen() {
     <Screen>
       <TopBar title={materialText(language, 'title')} back />
       <Text style={{ color: theme.colors.ink, ...theme.type.title }}>{construction.name}</Text>
+      {id && constructionId ? <ConstructionSwitch projectId={id} constructionId={constructionId} current="materials" /> : null}
       <Text style={{ color: theme.colors.steel, ...theme.type.body }}>{materialText(language, 'intro')}</Text>
       {calculation ? (
         <>

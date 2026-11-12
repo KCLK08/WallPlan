@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ConstructionSwitch } from '@/components/ConstructionSwitch';
 import { EmptyState } from '@/components/EmptyState';
 import { TopBar } from '@/components/TopBar';
 import { useAppTheme } from '@/components/useAppTheme';
@@ -38,6 +39,7 @@ export default function WallModelScreen() {
       {view ? (
         <View style={{ flex: 1, paddingHorizontal: 16 }}>
           <Text style={{ color: theme.colors.ink, fontSize: 18, lineHeight: 24, fontWeight: '700' }}>{construction.name}</Text>
+          <ConstructionSwitch projectId={id} constructionId={constructionId} current="model" />
           <SavedWallViewport wall={view} />
         </View>
       ) : (

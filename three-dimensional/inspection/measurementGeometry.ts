@@ -13,7 +13,7 @@ export function measureLines(wall: SavedWall, geometry: WallGeometry, toggles: L
     thicknessLine(wall, geometry),
   ];
   if (toggles.cw) {
-    const offsets = unique(wall.framing.studOffsetsMm);
+    const offsets = uniqueStoredOffsets(wall.framing.studOffsetsMm);
     for (let index = 0; index < offsets.length - 1; index += 1) {
       const gap = offsets[index + 1] - offsets[index];
       if (gap < 1) continue;
@@ -126,7 +126,7 @@ function boardVisible(layerId: string | null, side: SceneSide, toggles: LayerTog
 
 type SceneSide = 'A' | 'B' | null;
 
-function unique(values: readonly number[]): number[] {
+export function uniqueStoredOffsets(values: readonly number[]): number[] {
   const seen = new Set<number>();
   const result: number[] = [];
   for (const value of values) {
